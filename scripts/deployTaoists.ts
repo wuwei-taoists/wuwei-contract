@@ -3,7 +3,7 @@ import { Taoists } from '../wrappers/Taoists';
 import { NetworkProvider } from '@ton/blueprint';
 
 export async function run(provider: NetworkProvider) {
-    const taoists = provider.open(await Taoists.fromInit());
+    const taoists = provider.open(await Taoists.fromInit(provider.sender().address!));
 
     await taoists.send(
         provider.sender(),

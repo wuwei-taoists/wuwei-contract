@@ -17,25 +17,24 @@ export async function run(provider: NetworkProvider, args: string[]) {
 
     const clanId = await sect.getClanId();
     console.log('clanId', clanId);
-    const getGetAmountKey = await sect.getGetAmountKey(12345n);
+    const getGetAmountKey = await sect.getGetAmountKey(123456n);
     console.log('getGetAmountKey', getGetAmountKey)
 
     await sect.send(
         provider.sender(),
         {
-            value: toNano('0.15'),
+            value: toNano('0.05'),
         },
         {
-            $$type: 'Action',
-            teleId: 12345n,
-            actionId: 2n,
+            $$type: 'SellKey',
+            teleId: 123456n,
         }
     );
 
     let newAmountKey = getGetAmountKey;
     while (newAmountKey == getGetAmountKey) {
         ui.write('Waiting Sell Key...');
-        newAmountKey = await sect.getGetAmountKey(12345n);
+        newAmountKey = await sect.getGetAmountKey(123456n);
         await sleep(2000)
     }
     console.log('newAmountKey', newAmountKey)

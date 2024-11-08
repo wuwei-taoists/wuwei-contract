@@ -18,18 +18,18 @@ export async function run(provider: NetworkProvider, args: string[]) {
     await taoists.send(
         provider.sender(),
         {
-            value: toNano('0.15'),
+            value: toNano('0.1'),
         },
         {
             $$type: 'CreateSect',
-            clanId: 0n,
-            teleId: 12345n,
+            clanId: 1n,
+            teleId: 123456n,
         }
     );
 
     ui.write('Waiting Create Sect...');
 
-    let sectAddress = await taoists.getClanAddress(0n);
+    let sectAddress = await taoists.getClanAddress(1n);
 
     await provider.waitForDeploy(sectAddress);
     ui.clearActionPrompt();

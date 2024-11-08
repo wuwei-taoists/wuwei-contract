@@ -27,17 +27,17 @@ export async function run(provider: NetworkProvider, args: string[]) {
     const clanId = await sect.getClanId();
     console.log('clanId', clanId);
     const getTotalKey = await sect.getTotalKey();
+    const price = await sect.getBuyPrice();
     console.log('getTotalKey', getTotalKey)
 
     await sect.send(
         provider.sender(),
         {
-            value: toNano('0.15'),
+            value: toNano('0.05') + price,
         },
         {
-            $$type: 'Action',
-            teleId: 12345n,
-            actionId: 1n,
+            $$type: 'BuyKey',
+            teleId: 123456n,
         }
     );
 

@@ -1,5 +1,10 @@
 import "@stdlib/deploy";
 
+message CreateSectMsg {
+    teleId: Int;
+    sender: Address;
+}
+
 message BuyKey {
     teleId: Int;
 }
@@ -23,6 +28,18 @@ contract Sect with Deployable {
         self.masterAddress = masterAddress;
     }
 
+    receive(msg: CreateSectMsg) {
+        let mess: StringBuilder = beginString();
+        mess.append("CreateSect|");
+        mess.append(msg.teleId.toString());
+        send(SendParameters{
+            to: self.masterAddress,
+            value: 0,
+            mode: SendRemainingValue + SendIgnoreErrors,
+            body: mess.toString().asComment()
+        });
+    }
+
     receive(msg: BuyKey) {
         require(context().value > self.nextPrice, "TON is not enough");
         let amount = self.nextPrice;
@@ -40,8 +57,8 @@ contract Sect with Deployable {
 
         send(SendParameters{
             to: self.masterAddress,
-            value: 0,
-            mode: SendRemainingValue + SendIgnoreErrors,
+            value: ton("0.02"),
+            mode: SendPayGasSeparately + SendIgnoreErrors,
             body: mess.toString().asComment()
         });
     }
@@ -50,7 +67,7 @@ contract Sect with Deployable {
         let currentKey: Int? = self.member.get(msg.teleId);
         require(currentKey != null, "Key not found");
         self.member.set(msg.teleId, currentKey!! - 1);
-        let amount = self.nextPrice * 90 / 100 * 80 / 100;
+        let amount = self.nextPrice * 90 / 100 * 90 / 100;
 
         send(SendParameters{
             to: sender(),
@@ -68,12 +85,17 @@ contract Sect with Deployable {
 
         send(SendParameters{
             to: self.masterAddress,
-            value: 0,
-            mode: SendRemainingValue + SendIgnoreErrors,
+            value: ton("0.02"),
+            mode: SendPayGasSeparately + SendIgnoreErrors,
             body: mess.toString().asComment()
         });
-    }
 
+        send(SendParameters{
+            to: sender(),
+            value: 0,
+            mode: SendRemainingValue + SendIgnoreErrors,
+        });
+    }
     
 
     get fun getAmountKey(teleId: Int): Int {
